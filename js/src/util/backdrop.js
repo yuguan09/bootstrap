@@ -6,7 +6,8 @@
  */
 
 import EventHandler from '../dom/event-handler'
-import { emulateTransitionEnd, execute, getTransitionDurationFromElement, reflow, typeCheckConfig } from './index'
+import { emulateTransitionEnd, execute, getTransitionDurationFromElement, reflow } from './index'
+import Config from './config'
 
 const Default = {
   isVisible: true, // if false, we use the backdrop helper without adding any element to the dom
@@ -28,11 +29,23 @@ const CLASS_NAME_SHOW = 'show'
 
 const EVENT_MOUSEDOWN = `mousedown.bs.${NAME}`
 
-class Backdrop {
+class Backdrop extends Config {
   constructor(config) {
-    this._config = this._getConfig(config)
+    super(config)
     this._isAppended = false
     this._element = null
+  }
+
+  static get NAME() {
+    return NAME
+  }
+
+  static get Default() {
+    return Default
+  }
+
+  static get DefaultType() {
+    return DefaultType
   }
 
   show(callback) {
@@ -82,15 +95,6 @@ class Backdrop {
     }
 
     return this._element
-  }
-
-  _getConfig(config) {
-    config = {
-      ...Default,
-      ...(typeof config === 'object' ? config : {})
-    }
-    typeCheckConfig(NAME, config, DefaultType)
-    return config
   }
 
   _append() {
