@@ -1,15 +1,15 @@
 /**
  * --------------------------------------------------------------------------
- * Bootstrap (v5.0.0-beta3): util/backdrop.js
+ * Bootstrap (v5.0.0): util/config.js
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * --------------------------------------------------------------------------
  */
 
-import { typeCheckConfig } from './index'
+import { isElement, toType } from './index'
 
 class Config {
-  constructor(config) {
-    this._config = this._getConfig(config)
+  constructor(config = null) {
+    this._config = this._initializeConfig(config)
   }
 
   static get NAME() {
@@ -24,7 +24,7 @@ class Config {
     return {}
   }
 
-  _getConfig(config) {
+  _initializeConfig(config) {
     config = this._mergeConfigObj(config)
     this._typeCheckConfig(config)
     return config
@@ -38,7 +38,17 @@ class Config {
   }
 
   _typeCheckConfig(config) {
-    typeCheckConfig(this.constructor.NAME, config, this.constructor.DefaultType)
+    Object.keys(this.constructor.DefaultType).forEach(property => {
+      const expectedTypes = this.constructor.DefaultType[property]
+      const value = config[property]
+      const valueType = value && isElement(value) ? 'element' : toType(value)
+
+      if (!new RegExp(expectedTypes).test(valueType)) {
+        throw new TypeError(
+          `${this.constructor.NAME.toUpperCase()}: Option "${property}" provided type "${valueType}" but expected type "${expectedTypes}".`
+        )
+      }
+    })
   }
 }
 

@@ -254,5 +254,6 @@ export {
   onDOMContentLoaded,
   isRTL,
   defineJQueryPlugin,
-  execute
+  execute,
+  toType
 }
